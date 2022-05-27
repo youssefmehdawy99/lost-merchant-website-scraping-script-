@@ -1,0 +1,70 @@
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from bs4 import BeautifulSoup
+import time
+import datetime
+
+def dropdown_selector(element_id,element_name):
+    sleep_sec=0
+    while 1 :
+        try:
+            severRegion = driver.find_element(By.ID,element_id)
+            select=Select(severRegion)
+            select.select_by_visible_text(element_name)
+            break
+        except:
+            time.sleep(1)
+            sleep_sec+=1
+            if sleep_sec>10:
+                return('Timed-Out')
+                break  
+
+
+def table_fetcher(Server):
+    dropdown_selector('server',Server)
+    table1=driver.find_element(By.CLASS_NAME,'table')
+    leg_items=table1.find_elements(By.TAG_NAME,'Td')
+    table=[]
+    for items in leg_items  :
+        #print(items.text)
+        table.append(items.text)
+    table.pop(0)#bug in html code first 
+    return table
+
+def save_file(item,item_name):
+
+    file=f"C:/Users/PC/Desktop/{item_name}.txt"
+    f = open(file,"w")
+    for items in item:
+        #print(items)
+        f.write('\n') if items=='' else f.write(items + ' ')
+    f.close()
+
+
+url='https://lostmerchants.com'
+ser = Service("C:/Users/PC/Downloads/chromedriver.exe")
+op = webdriver.ChromeOptions()
+driver = webdriver.Chrome(service=ser, options=op)
+driver.get(url)
+
+dropdown_selector('severRegion','EU Central')
+
+table_zinner=table_fetcher('Zinnervale')
+print(table_zinner)
+save_file(table_zinner,f'{table_zinner=}'.split('=')[0].split('_'))
+
+#table_Beatrice=table_fetcher('Beatrice')
+#save_file(table_Beatrice)
+       
+#time.sleep(10)
+#CurrentDate=time.strftime('%H:%M')
+
+
+
+
