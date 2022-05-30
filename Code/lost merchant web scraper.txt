@@ -28,42 +28,58 @@ def dropdown_selector(element_id,element_name):
 
 def table_fetcher(Server):
     dropdown_selector('server',Server)
-    table1=driver.find_element(By.CLASS_NAME,'table')
-    leg_items=table1.find_elements(By.TAG_NAME,'Td')
-    table=[]
-    for items in leg_items  :
-        #print(items.text)
-        table.append(items.text)
-    table.pop(0)#bug in html code first 
-    return table
+    sleep_sec=0
+    while 1 :
+        try:
+            table=driver.find_element(By.CLASS_NAME,'table')
+            leg_items=table.find_elements(By.TAG_NAME,'Td')
+            table=[]
+            for items in leg_items:
+                table.append(items.text)
+            #print(table1)
+            table.pop(0)#bug in HTML code where Table header is included in table contents
+            return table
+            break
+        except:
+            time.sleep(1)
+            sleep_sec+=1
+            if sleep_sec>10:
+                return('Timed-Out')
+                break
 
 def save_file(item,item_name):
 
-    file=f"C:/Users/PC/Desktop/{item_name}.txt"
+    file=f"C:/Users/PC/Desktop/table_{item_name}.txt"
     f = open(file,"w")
     for items in item:
         #print(items)
         f.write('\n') if items=='' else f.write(items + ' ')
     f.close()
 
+def open_site(url):
+    ser = Service("C:/Users/PC/Downloads/chromedriver.exe")
+    op = webdriver.ChromeOptions()
+    driver = webdriver.Chrome(service=ser, options=op)
+    driver.get(url)
+    return driver
+
 
 url='https://lostmerchants.com'
-ser = Service("C:/Users/PC/Downloads/chromedriver.exe")
-op = webdriver.ChromeOptions()
-driver = webdriver.Chrome(service=ser, options=op)
-driver.get(url)
+
+driver=open_site(url)
 
 dropdown_selector('severRegion','EU Central')
 
 table_zinner=table_fetcher('Zinnervale')
 print(table_zinner)
-save_file(table_zinner,f'{table_zinner=}'.split('=')[0].split('_'))
+save_file(table_zinner,f'{table_zinner=}'.split('=')[0].split('_')[1])
 
-#table_Beatrice=table_fetcher('Beatrice')
-#save_file(table_Beatrice)
+table_Beatrice=table_fetcher('Beatrice')
+print(table_Beatrice)
+save_file(table_Beatrice,f'{table_Beatrice=}'.split('=')[0].split('_')[1])
        
 #time.sleep(10)
-#CurrentDate=time.strftime('%H:%M')
+
 
 
 
