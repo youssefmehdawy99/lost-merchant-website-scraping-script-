@@ -63,20 +63,32 @@ def open_site(url):
     driver.get(url)
     return driver
 
+def sleepUntil(minute):
+    t = datetime.datetime.today()
+    future = datetime.datetime(t.year, t.month, t.day, t.hour, minute)
+    if t.timestamp() > future.timestamp():
+        future += datetime.timedelta(days=1)
+    time.sleep((future - t).total_seconds())
 
+    
 url='https://lostmerchants.com'
 
 driver=open_site(url)
 
 dropdown_selector('severRegion','EU Central')
 
-table_zinner=table_fetcher('Zinnervale')
-print(table_zinner)
-save_file(table_zinner,f'{table_zinner=}'.split('=')[0].split('_')[1])
+while(True):
+    currentTime = int(time.strftime('%M'))
+    if currentTime > 55 or currentTime < 31:
+        sleepUntil(31)   
+    table_zinner=table_fetcher('Zinnervale')
+    print(table_zinner)
+    save_file(table_zinner,f'{table_zinner=}'.split('=')[0].split('_')[1])
 
-table_Beatrice=table_fetcher('Beatrice')
-print(table_Beatrice)
-save_file(table_Beatrice,f'{table_Beatrice=}'.split('=')[0].split('_')[1])
+    table_Beatrice=table_fetcher('Beatrice')
+    print(table_Beatrice)
+    save_file(table_Beatrice,f'{table_Beatrice=}'.split('=')[0].split('_')[1])
+    time.sleep(60)
        
 #time.sleep(10)
 
